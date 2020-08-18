@@ -12,5 +12,5 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
-
+    $router->resource('wx_users', WxUserController::class);
 });
