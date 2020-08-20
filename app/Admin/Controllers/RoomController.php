@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Room\ImportRoom;
 use App\Models\Room;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -21,6 +22,7 @@ class RoomController extends AdminController
             $filter->disableIdFilter();
             $filter->column(1/3, function ($filter) {
                 $filter->like('no', '房间编号');
+                $filter->between('created_at', '创建时间')->datetime();
             });
 
             $filter->column(1/3, function ($filter) {
@@ -46,6 +48,10 @@ class RoomController extends AdminController
 
         $grid->export(function ($export) {
             $export->filename(date("YmdHis") . '房间档案');
+        });
+
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new ImportRoom());
         });
 
         return $grid;
