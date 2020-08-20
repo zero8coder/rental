@@ -10,38 +10,47 @@ use Encore\Admin\Show;
 
 class RoomController extends AdminController
 {
-    /**
-     * Title for current resource.
-     *
-     * @var string
-     */
+
     protected $title = '房间';
 
-    /**
-     * Make a grid builder.
-     *
-     * @return Grid
-     */
     protected function grid()
     {
         $grid = new Grid(new Room());
 
+        $grid->filter(function ($filter){
+            $filter->disableIdFilter();
+            $filter->column(1/3, function ($filter) {
+                $filter->like('no', '房间编号');
+            });
+
+            $filter->column(1/3, function ($filter) {
+                $filter->like('storey', '楼层')->integer();
+            });
+
+            $filter->column(1/3, function ($filter) {
+                $filter->equal('status', '房间状态')->select([Room::STATUS_UNUSED => Room::$statusMap[Room::STATUS_UNUSED], Room::STATUS_USING => Room::$statusMap[Room::STATUS_USING]]);
+            });
+
+        });
+
+
+
         $grid->column('id', __('Id'));
         $grid->column('no', '房间编号');
         $grid->column('storey', '楼层');
-        $grid->column('status', '房间状态');
+        $grid->column('status', '房间状态')->display(function ($status) {
+            return Room::$statusMap[$status];
+        });
         $grid->column('created_at', '创建时间');
         $grid->column('updated_at', '更新时间');
+
+        $grid->export(function ($export) {
+            $export->filename(date("YmdHis") . '房间档案');
+        });
 
         return $grid;
     }
 
-    /**
-     * Make a show builder.
-     *
-     * @param mixed $id
-     * @return Show
-     */
     protected function detail($id)
     {
         $show = new Show(Room::findOrFail($id));
@@ -49,7 +58,9 @@ class RoomController extends AdminController
         $show->field('id', __('Id'));
         $show->field('no', '房间编号');
         $show->field('storey','楼层');
-        $show->field('status', '房间状态');
+        $show->field('status', '房间状态')->as(function ($status) {
+            return Room::$statusMap[$status];
+        });
         $show->field('created_at', '创建时间');
         $show->field('updated_at', '更新时间');
 
@@ -66,9 +77,9 @@ class RoomController extends AdminController
         $form = new Form(new Room());
 
         $form->text('no','房间编号');
-        $form->text('storey', '楼层');
-        $form->text('status', '房间状态');
+        $form->number('storey', '楼层');
 
+        $form->radio('status', '房间状态')->options([Room::STATUS_UNUSED => Room::$statusMap[Room::STATUS_UNUSED], Room::STATUS_USING => Room::$statusMap[Room::STATUS_USING]])->default(Room::STATUS_UNUSED);
         return $form;
     }
 }
