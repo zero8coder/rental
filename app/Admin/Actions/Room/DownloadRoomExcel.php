@@ -12,16 +12,19 @@ class DownloadRoomExcel extends Action
 
     public function handle(Request $request)
     {
-        // $request ...
-
-        return $this->response()->success('Success message...')->refresh();
+        $url = Storage::disk ('public')->url("import/room.xls");
+        return $this->response()->download($url)->success('下载成功');
     }
 
     public function html()
     {
-        $url = Storage::disk ('public')->url("import/room.xls");
+
         return <<<HTML
-        <a class="btn btn-sm btn-default" href=$url target="_blank">下载模板</a>
+        <a class="btn btn-sm btn-default download-room-excel">下载模板</a>
 HTML;
+    }
+    public function dialog()
+    {
+        $this->confirm('确定下载模板？');
     }
 }
