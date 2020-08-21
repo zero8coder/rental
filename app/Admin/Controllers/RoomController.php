@@ -2,12 +2,14 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Room\DownloadRoomExcel;
 use App\Admin\Actions\Room\ImportRoom;
 use App\Models\Room;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\Storage;
 
 class RoomController extends AdminController
 {
@@ -52,6 +54,7 @@ class RoomController extends AdminController
 
         $grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ImportRoom());
+            $tools->append(new DownloadRoomExcel());
         });
 
         return $grid;
@@ -88,4 +91,5 @@ class RoomController extends AdminController
         $form->radio('status', '房间状态')->options([Room::STATUS_UNUSED => Room::$statusMap[Room::STATUS_UNUSED], Room::STATUS_USING => Room::$statusMap[Room::STATUS_USING]])->default(Room::STATUS_UNUSED);
         return $form;
     }
+    
 }
