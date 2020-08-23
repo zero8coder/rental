@@ -14,4 +14,5 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('wx_users', WxUserController::class);
     $router->resource('rooms', RoomController::class);
+    $router->resource('tenants', TenantController::class);
 });
