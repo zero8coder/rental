@@ -22,13 +22,6 @@ class TenantController extends AdminController
 
         $grid = new Grid(new Tenant());
 
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('姓名'));
-        $grid->column('phone', __('手机号'));
-        $grid->column('id_card', __('身份证'));
-        $grid->column('created_at', __('创建时间'));
-        $grid->column('updated_at', __('修改时间'));
-
         $grid->filter(function ($filter){
             $filter->disableIdFilter();
             $filter->column(1/3, function ($filter) {
@@ -49,6 +42,16 @@ class TenantController extends AdminController
             $filter->scope('trashed', '回收站')->onlyTrashed();
 
         });
+
+
+        $grid->column('id', __('Id'));
+        $grid->column('name', __('姓名'));
+        $grid->column('phone', __('手机号'));
+        $grid->column('id_card', __('身份证'));
+        $grid->column('created_at', __('创建时间'));
+        $grid->column('updated_at', __('修改时间'));
+
+
 
         $grid->actions(function ($actions) {
             $actions->add(new Restore());

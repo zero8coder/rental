@@ -4,6 +4,8 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Room\DownloadRoomExcel;
 use App\Admin\Actions\Room\ImportRoom;
+use App\Admin\Actions\Room\BatchRestore;
+use App\Admin\Actions\Room\Restore;
 use App\Models\Room;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -35,6 +37,8 @@ class RoomController extends AdminController
                 $filter->equal('status', '房间状态')->select([Room::STATUS_UNUSED => Room::$statusMap[Room::STATUS_UNUSED], Room::STATUS_USING => Room::$statusMap[Room::STATUS_USING]]);
             });
 
+            $filter->scope('trashed', '回收站')->onlyTrashed();
+
         });
 
 
@@ -55,6 +59,14 @@ class RoomController extends AdminController
         $grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ImportRoom());
             $tools->append(new DownloadRoomExcel());
+        });
+
+        $grid->actions(function ($actions) {
+            $actions->add(new Restore());
+        });
+
+        $grid->batchActions(function ($batch) {
+            $batch->add(new BatchRestore());
         });
 
         return $grid;
@@ -91,5 +103,5 @@ class RoomController extends AdminController
         $form->radio('status', '房间状态')->options([Room::STATUS_UNUSED => Room::$statusMap[Room::STATUS_UNUSED], Room::STATUS_USING => Room::$statusMap[Room::STATUS_USING]])->default(Room::STATUS_UNUSED);
         return $form;
     }
-    
+
 }
