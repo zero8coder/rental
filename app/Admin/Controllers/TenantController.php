@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Tenant\BatchRestore;
+use App\Admin\Actions\Tenant\ImportTenant;
 use App\Models\Room;
 use App\Models\Tenant;
 use Encore\Admin\Controllers\AdminController;
@@ -21,6 +22,8 @@ class TenantController extends AdminController
     {
 
         $grid = new Grid(new Tenant());
+
+
 
         $grid->filter(function ($filter){
             $filter->disableIdFilter();
@@ -63,6 +66,11 @@ class TenantController extends AdminController
 
         $grid->export(function ($export) {
             $export->filename(date("YmdHis") . '租客档案');
+        });
+
+        // 将导入操作加入到表格的工具条中
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new ImportTenant());
         });
 
 
