@@ -17,11 +17,32 @@ class Room extends Model
         self::STATUS_USING => '出租中',
     ];
 
+    const ROOM_TENANT_STATUS_IN = 'in';
+    const ROOM_TENANT_STATUS_OUT = 'out';
+
+    public static $roomTenantStatusMap = [
+        self::ROOM_TENANT_STATUS_IN => '在租',
+        self::ROOM_TENANT_STATUS_OUT => '退房',
+    ];
+
+
 
     protected $fillable = [
         'no',
         'storey',
         'status',
     ];
+
+    public function tenants()
+    {
+        return $this->belongsToMany('App\Models\Tenant')->withPivot('status')->wherePivot('is_del', false)->withTimestamps();
+    }
+
+    public function delTenants()
+    {
+        return $this->belongsToMany('App\Models\Tenant')->withPivot('status')->wherePivot('is_del', true)->withTimestamps();
+    }
+
+
 
 }

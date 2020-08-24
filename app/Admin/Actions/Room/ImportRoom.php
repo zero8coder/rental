@@ -40,7 +40,7 @@ class ImportRoom extends Action
     public function html()
     {
         return <<<HTML
-        <a class="btn btn-sm btn-default import-room">导入数据</a>
+        <a class="btn btn-sm btn-default import-room"><i class="fa fa-upload"></i>导入数据</a>
 HTML;
     }
 }

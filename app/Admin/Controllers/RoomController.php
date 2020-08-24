@@ -84,7 +84,18 @@ class RoomController extends AdminController
         });
         $show->field('created_at', '创建时间');
         $show->field('updated_at', '更新时间');
+        $show->tenants('租客', function ($tenants) {
+            $tenants->resource('/z/tenants');
+            $tenants->name('租客姓名');
+            $tenants->status('状态')->display(function ($status) {
+                return Room::$roomTenantStatusMap[$status];
+            });
 
+  
+            $tenants->disableCreateButton();
+
+
+        });
         return $show;
     }
 
