@@ -6,6 +6,7 @@ use App\Admin\Actions\Room\DownloadRoomExcel;
 use App\Admin\Actions\Room\ImportRoom;
 use App\Admin\Actions\Room\BatchRestore;
 use App\Admin\Actions\Room\Restore;
+use App\Admin\Actions\Room\RoomTenant;
 use App\Models\Room;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -84,15 +85,25 @@ class RoomController extends AdminController
         });
         $show->field('created_at', '创建时间');
         $show->field('updated_at', '更新时间');
-        $show->tenants('租客', function ($tenants) {
+        $show->tenants('租客', function ($tenants) use($id) {
+
             $tenants->resource('/z/tenants');
             $tenants->name('租客姓名');
+            $tenants->phone('手机号');
+            $tenants->id_card('身份证');
             $tenants->status('状态')->display(function ($status) {
                 return Room::$roomTenantStatusMap[$status];
             });
 
-  
             $tenants->disableCreateButton();
+            $tenants->disableExport();
+            $tenants->disableRowSelector();
+
+            $tenants->tools(function (Grid\Tools $tools) use($id) {
+                $roomTenantTool = new RoomTenant();
+                $roomTenantTool->setRoomId($id);
+                $tools->append($roomTenantTool);
+            });
 
 
         });
