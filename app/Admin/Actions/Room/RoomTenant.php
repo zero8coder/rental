@@ -13,10 +13,6 @@ class RoomTenant extends Action
     protected $selector = '.room-tenant';
     private $room_id;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     public function handle(Request $request)
     {

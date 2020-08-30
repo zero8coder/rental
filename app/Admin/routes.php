@@ -15,4 +15,5 @@ Route::group([
     $router->resource('wx_users', WxUserController::class);
     $router->resource('rooms', RoomController::class);
     $router->resource('tenants', TenantController::class);
+    $router->resource('room_tenants', RoomTenantController::class);
 });
