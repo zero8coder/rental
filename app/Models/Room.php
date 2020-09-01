@@ -35,12 +35,12 @@ class Room extends Model
 
     public function tenants()
     {
-        return $this->belongsToMany('App\Models\Tenant')->withPivot('status')->wherePivot('is_del', false)->withTimestamps();
+        return $this->belongsToMany('App\Models\Tenant')->withPivot('status', 'created_at')->wherePivot('is_del', false)->withTimestamps();
     }
 
     public function delTenants()
     {
-        return $this->belongsToMany('App\Models\Tenant')->withPivot('status')->wherePivot('is_del', true)->withTimestamps();
+        return $this->belongsToMany('App\Models\Tenant')->withPivot('status', 'created_at')->wherePivot('is_del', true)->withTimestamps();
     }
 
 

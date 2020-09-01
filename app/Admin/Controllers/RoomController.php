@@ -87,6 +87,25 @@ class RoomController extends AdminController
         $show->field('created_at', '创建时间');
         $show->field('updated_at', '更新时间');
         $show->tenants('租客', function ($tenants) use($id) {
+
+            $tenants->filter(function ($filter){
+                $filter->disableIdFilter();
+                $filter->column(1/3, function ($filter) {
+                    $filter->like('name', '租客姓名');
+                    $filter->between('created_at', '创建时间')->datetime();
+                });
+
+                $filter->column(1/3, function ($filter) {
+                    $filter->like('phone', '手机号');
+                });
+
+                $filter->column(1/3, function ($filter) {
+                    $filter->like('id_card', '身份证');
+                });
+
+
+            });
+
             $tenants->resource('/' . config('admin.route.prefix') . '/tenants');
             $tenants->name('租客姓名');
             $tenants->phone('手机号');
@@ -94,6 +113,8 @@ class RoomController extends AdminController
             $tenants->status('状态')->display(function ($status) {
                 return Room::$roomTenantStatusMap[$status];
             });
+
+            $tenants->created_at('创建时间');
 
 
             $tenants->disableCreateButton();
