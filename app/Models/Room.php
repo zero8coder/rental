@@ -21,7 +21,7 @@ class Room extends Model
     const ROOM_TENANT_STATUS_OUT = 'out';
 
     public static $roomTenantStatusMap = [
-        self::ROOM_TENANT_STATUS_IN => '在租',
+        self::ROOM_TENANT_STATUS_IN => '入住',
         self::ROOM_TENANT_STATUS_OUT => '退房',
     ];
 

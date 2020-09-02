@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Room\CheckIn;
 use App\Admin\Actions\Room\CheckOut;
 use App\Admin\Actions\Room\DownloadRoomExcel;
 use App\Admin\Actions\Room\ImportRoom;
@@ -137,6 +138,8 @@ class RoomController extends AdminController
                 $actions->add(new RoomTenantDelete());
                 // 退房操作
                 $actions->add(new CheckOut());
+                // 入住操作
+                $actions->add(new CheckIn());
 
             });
 
