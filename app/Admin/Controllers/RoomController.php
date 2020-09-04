@@ -89,7 +89,6 @@ class RoomController extends AdminController
         $show->field('created_at', '创建时间');
         $show->field('updated_at', '更新时间');
         $show->tenants('租客', function ($tenants) use($id) {
-
             $tenants->filter(function ($filter){
                 $filter->disableIdFilter();
                 $filter->column(1/3, function ($filter) {
@@ -101,11 +100,7 @@ class RoomController extends AdminController
                     $filter->like('phone', '手机号');
                 });
 
-                $filter->column(1/3, function ($filter) {
-                    $filter->like('id_card', '身份证');
-                });
-
-
+                $filter->scope('del', '回收站')->where('is_del', true);
             });
 
             $tenants->resource('/' . config('admin.route.prefix') . '/tenants');
@@ -115,6 +110,7 @@ class RoomController extends AdminController
             $tenants->status('状态')->display(function ($status) {
                 return Room::$roomTenantStatusMap[$status];
             });
+            $tenants->is_del('删除');
 
 
             $tenants->created_at('创建时间');
@@ -131,15 +127,26 @@ class RoomController extends AdminController
             });
 
             $tenants->actions(function ($actions) use($id) {
+
                 session()->put('room_id', $id);
+                $tenant = $actions->row;
+
                 // 去掉删除
                 $actions->disableDelete();
                 // 删除操作
-                $actions->add(new RoomTenantDelete());
+                if (!$tenant->is_del) {
+                    $actions->add(new RoomTenantDelete());
+                }
+
                 // 退房操作
-                $actions->add(new CheckOut());
+                if ($tenant->status === Room::ROOM_TENANT_STATUS_IN) {
+                    $actions->add(new CheckOut());
+                }
+
                 // 入住操作
-                $actions->add(new CheckIn());
+                if ($tenant->status === Room::ROOM_TENANT_STATUS_OUT) {
+                    $actions->add(new CheckIn());
+                }
 
             });
 
