@@ -88,7 +88,18 @@ class RoomController extends AdminController
         });
         $show->field('created_at', '创建时间');
         $show->field('updated_at', '更新时间');
-        $show->tenants('租客', function ($tenants) use($id) {
+
+
+        $scope = \Request::get('_scope_');
+        // 判断回收站筛选
+        $is_del = false;
+        if ($scope === 'is_del') {
+            $is_del = true;
+        }
+        $show->tenants('租客', function ($tenants) use($id, $is_del) {
+            if (!$is_del) {
+                $tenants->model()->where('is_del', false);
+            }
             $tenants->filter(function ($filter){
                 $filter->disableIdFilter();
                 $filter->column(1/3, function ($filter) {
@@ -100,8 +111,12 @@ class RoomController extends AdminController
                     $filter->like('phone', '手机号');
                 });
 
-                $filter->scope('del', '回收站')->where('is_del', true);
+                $filter->scope('is_del', '回收站')->where('is_del', true);
+
             });
+
+
+
 
             $tenants->resource('/' . config('admin.route.prefix') . '/tenants');
             $tenants->name('租客姓名');
