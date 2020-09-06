@@ -57,7 +57,20 @@ class TenantController extends AdminController
 
 
         $grid->actions(function ($actions) {
-            $actions->add(new Restore());
+            $row = $actions->row;
+            if ($row->deleted_at) {
+                // 删除状态
+
+                // 去掉删除
+                $actions->disableDelete();
+                // 去掉编辑
+                $actions->disableEdit();
+                // 去掉查看
+                $actions->disableView();
+                // 添加恢复
+                $actions->add(new Restore());
+            }
+
         });
 
         $grid->batchActions(function ($batch) {

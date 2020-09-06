@@ -6,24 +6,20 @@ use App\Models\Room;
 use Encore\Admin\Actions\RowAction;
 use Illuminate\Database\Eloquent\Model;
 
-class RoomTenantDelete extends RowAction
+class RoomTenantRestore extends RowAction
 {
-    public $name = '删除';
+    public $name = '恢复';
 
     public function handle(Model $model)
     {
         $room = Room::findOrFail(session()->get('room_id'));
-        $room->tenants()->updateExistingPivot($model->id, ['is_del' => true]);
-        return $this->response()->success('恢复成功')->refresh();
+        $room->tenants()->updateExistingPivot($model->id, ['is_del' => false]);
+        return $this->response()->success('成功')->refresh();
     }
 
     public function dialog(){
-        $this->confirm('是否删除');
+        $this->confirm('是否恢复');
     }
-
-
-
-
 
 
 }
