@@ -14,4 +14,15 @@ class Tenant extends Model
         'phone',
         'id_card',
     ];
+
+    public function rooms()
+    {
+        return $this->belongsToMany('App\Models\Room')->withPivot('status', 'created_at', 'is_del')->withTimestamps();
+    }
+
+
+    public function normalRooms()
+    {
+        return $this->belongsToMany('App\Models\Room')->withPivot('status', 'created_at', 'is_del')->wherePivot('is_del', false)->withTimestamps();
+    }
 }

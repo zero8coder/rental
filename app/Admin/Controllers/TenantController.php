@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+
 use App\Admin\Actions\Tenant\BatchRestore;
 use App\Admin\Actions\Tenant\ImportTenant;
 use App\Models\Room;
@@ -11,6 +12,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Admin\Actions\Tenant\Restore;
+use App\Admin\Actions\Tenant\RoomTenant;
 
 class TenantController extends AdminController
 {
@@ -100,6 +102,58 @@ class TenantController extends AdminController
         $show->field('id_card', __('身份证'));
         $show->field('created_at', __('创建时间'));
         $show->field('updated_at', __('修改时间'));
+
+        $scope = \Request::get('_scope_');
+        // 判断回收站筛选
+        $is_del = false;
+        if ($scope === 'is_del') {
+            $is_del = true;
+        }
+        $show->rooms('房间', function ($rooms) use($id, $is_del) {
+
+            if (!$is_del) {
+                $rooms->model()->where('is_del', false);
+            }
+
+            $rooms->filter(function ($filter){
+                $filter->disableIdFilter();
+                $filter->column(1/3, function ($filter) {
+                    $filter->like('no', '房间编号');
+                    $filter->between('created_at', '创建时间')->datetime();
+                });
+
+                $filter->column(1/3, function ($filter) {
+                    $filter->like('storey', '楼层');
+                });
+
+                $filter->scope('is_del', '回收站')->where('is_del', true);
+
+            });
+
+
+            $rooms->resource('/' . config('admin.route.prefix') . '/rooms');
+            $rooms->no('房间编号');
+            $rooms->storey('楼层');
+            $rooms->status('状态')->display(function ($status) {
+                return Room::$roomTenantStatusMap[$status];
+            });
+
+
+            $rooms->created_at('创建时间');
+
+
+            $rooms->disableCreateButton();
+            $rooms->disableExport();
+            $rooms->disableRowSelector();
+            $rooms->tools(function (Grid\Tools $tools) use($id) {
+                session()->put('tenant_id', $id);
+                $roomTenantTool = new RoomTenant();
+                $tools->append($roomTenantTool);
+            });
+
+
+
+        });
 
         return $show;
     }

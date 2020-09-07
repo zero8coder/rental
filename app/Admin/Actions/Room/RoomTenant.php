@@ -11,7 +11,6 @@ use App\Models\Tenant;
 class RoomTenant extends Action
 {
     protected $selector = '.room-tenant';
-    private $room_id;
 
 
     public function handle(Request $request)
@@ -25,7 +24,7 @@ class RoomTenant extends Action
         {
             $room = Room::find($room_id);
             // 房间租客 ID 集合
-            $roomTenantsIds = $room->tenants->pluck('id')->toArray();
+            $roomTenantsIds = $room->normalTenants->pluck('id')->toArray();
 
             if ($name && $phone) {
                 // 填写名称和手机号
@@ -74,6 +73,7 @@ class RoomTenant extends Action
     }
 
     public function form() {
+
         $this->hidden('room_id')->value($this->room_id);
         $this->text('name', '租客姓名')->required();
         $this->mobile('phone', '手机号');

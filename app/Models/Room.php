@@ -38,6 +38,12 @@ class Room extends Model
         return $this->belongsToMany('App\Models\Tenant')->withPivot('status', 'created_at', 'is_del')->withTimestamps();
     }
 
+    public function normalTenants()
+    {
+        return $this->belongsToMany('App\Models\Tenant')->withPivot('status', 'created_at', 'is_del')->wherePivot('is_del', false)->withTimestamps();
+    }
+
+
 
 
 }
