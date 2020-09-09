@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Tenant\BatchRestore;
 use App\Admin\Actions\Tenant\ImportTenant;
+use App\Admin\Actions\Tenant\RoomTenantDelete;
 use App\Models\Room;
 use App\Models\Tenant;
 use Encore\Admin\Controllers\AdminController;
@@ -115,6 +116,8 @@ class TenantController extends AdminController
                 $rooms->model()->where('is_del', false);
             }
 
+
+
             $rooms->filter(function ($filter){
                 $filter->disableIdFilter();
                 $filter->column(1/3, function ($filter) {
@@ -150,6 +153,19 @@ class TenantController extends AdminController
                 $roomTenantTool = new RoomTenant();
                 $tools->append($roomTenantTool);
             });
+
+            $rooms->actions(function ($actions) use($id) {
+                session()->put('tenant_id', $id);
+                $room = $actions->row;
+                // 去掉删除
+                $actions->disableDelete();
+                if (!$room->is_del) {
+                    // 添加删除操作
+                    $actions->add(new RoomTenantDelete());
+                }
+            });
+
+
 
 
 
