@@ -151,8 +151,7 @@ class RoomController extends AdminController
 
                 // 正常状态
                 if (!$tenant->is_del) {
-                    // 添加删除操作
-                    $actions->add(new RoomTenantDelete());
+
 
                     // 添加退房操作
                     if ($tenant->status === Room::ROOM_TENANT_STATUS_IN) {
@@ -163,6 +162,9 @@ class RoomController extends AdminController
                     if ($tenant->status === Room::ROOM_TENANT_STATUS_OUT) {
                         $actions->add(new CheckIn());
                     }
+
+                    // 添加删除操作
+                    $actions->add(new RoomTenantDelete());
 
                 } else {
                 // 删除状态

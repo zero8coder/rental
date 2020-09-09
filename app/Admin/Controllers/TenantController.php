@@ -4,6 +4,8 @@ namespace App\Admin\Controllers;
 
 
 use App\Admin\Actions\Tenant\BatchRestore;
+use App\Admin\Actions\Tenant\CheckIn;
+use App\Admin\Actions\Tenant\CheckOut;
 use App\Admin\Actions\Tenant\ImportTenant;
 use App\Admin\Actions\Tenant\RoomTenantDelete;
 use App\Models\Room;
@@ -62,7 +64,7 @@ class TenantController extends AdminController
         $grid->actions(function ($actions) {
             $row = $actions->row;
             if ($row->deleted_at) {
-                // 删除状态
+             // 删除状态
 
                 // 去掉删除
                 $actions->disableDelete();
@@ -160,8 +162,27 @@ class TenantController extends AdminController
                 // 去掉删除
                 $actions->disableDelete();
                 if (!$room->is_del) {
+                  // 正常状态
+
+
+                    // 添加退房操作
+                    if ($room->status === Room::ROOM_TENANT_STATUS_IN) {
+                        $actions->add(new CheckOut());
+                    }
+
+                    // 添加入住操作
+                    if ($room->status === Room::ROOM_TENANT_STATUS_OUT) {
+                        $actions->add(new CheckIn());
+                    }
+
                     // 添加删除操作
                     $actions->add(new RoomTenantDelete());
+                } else {
+                  // 删除状态
+                    // 去掉编辑
+                    $actions->disableEdit();
+                    // 去掉查看
+                    $actions->disableView();
                 }
             });
 
